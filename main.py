@@ -1,0 +1,1 @@
+print("Barlo is online.")
