@@ -1,5 +1,6 @@
 import requests
 
+
 def get_weather_description(code):
     weather_codes = {
         0: "clear",
@@ -25,6 +26,7 @@ def get_weather_description(code):
 
     return weather_codes.get(code, "unknown conditions")
 
+
 def get_weather(latitude, longitude):
     url = "https://api.open-meteo.com/v1/forecast"
 
@@ -32,8 +34,10 @@ def get_weather(latitude, longitude):
         "latitude": latitude,
         "longitude": longitude,
         "current": "temperature_2m,apparent_temperature,weather_code",
+        "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max",
         "temperature_unit": "fahrenheit",
-        "timezone":"auto",
+        "timezone": "auto",
+        "forecast_days": 1,
     }
 
     response = requests.get(url, params=parameters, timeout=10)
@@ -41,4 +45,16 @@ def get_weather(latitude, longitude):
 
     data = response.json()
 
-    return data["current"]
+    current = data["current"]
+    daily = data["daily"]
+
+    weather_data = {
+        "temperature": current["temperature_2m"],
+        "feels_like": current["apparent_temperature"],
+        "weather_code": current["weather_code"],
+        "high": daily["temperature_2m_max"][0],
+        "low": daily["temperature_2m_min"][0],
+        "precipitation_chance": daily["precipitation_probability_max"][0],
+    }
+
+    return weather_data

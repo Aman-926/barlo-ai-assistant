@@ -10,9 +10,12 @@ from weather import get_weather, get_weather_description
 
 weather = get_weather(43.10, -75.23)
 
-temperature = weather["temperature_2m"]
-feels_like = weather["apparent_temperature"]
+temperature = weather["temperature"]
+feels_like = weather["feels_like"]
 condition = get_weather_description(weather["weather_code"])
+high = weather["high"]
+low = weather["low"]
+precipitation = weather ["precipitation_chance"]
 
 
 # -----------------------------
@@ -22,7 +25,7 @@ condition = get_weather_description(weather["weather_code"])
 root = tk.Tk()
 
 root.title("Barlo")
-root.geometry("500x700")
+root.geometry("500x800")
 root.resizable(False, False)
 
 
@@ -98,6 +101,13 @@ feels_like_label = tk.Label(
 )
 
 feels_like_label.pack(pady=(5, 20))
+forecast_label = tk.Label(
+    root,
+    text=f"High: {high}°F • Low: {low}°F • Rain: {precipitation}%",
+    font=("Arial", 12)
+)
+
+forecast_label.pack(pady=(0, 20))
 
 
 # -----------------------------
@@ -119,7 +129,9 @@ def ask_barlo():
     if "weather" in question.lower():
         response = (
             f"It's currently {temperature}°F and {condition}. "
-            f"It feels like {feels_like}°F outside."
+            f"It feels like {feels_like}°F."
+            f"Today's high is {high}°F with a low of {low}°F. "
+            f"There's a {precipitation}% chance of precipitation."
         )
     else:
         response = "I can only answer weather questions right now."
