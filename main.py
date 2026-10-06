@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 
 from weather import get_weather, get_weather_description
+from voice import record_audio, transcribe_audio
 
 
 # -----------------------------
@@ -25,7 +26,7 @@ precipitation = weather ["precipitation_chance"]
 root = tk.Tk()
 
 root.title("Barlo")
-root.geometry("500x800")
+root.geometry("500x900")
 root.resizable(False, False)
 
 
@@ -123,13 +124,23 @@ question_entry = tk.Entry(
 question_entry.pack(pady=10)
 
 
+def listen_to_user():
+    audio_file = record_audio()
+    transcription = transcribe_audio(audio_file)
+
+    question_entry.delete(0, tk.END)
+    question_entry.insert(0, transcription)
+
+    ask_barlo()
+
+
 def ask_barlo():
     question = question_entry.get()
 
     if "weather" in question.lower():
         response = (
             f"It's currently {temperature}°F and {condition}. "
-            f"It feels like {feels_like}°F."
+            f"It feels like {feels_like}°F. "
             f"Today's high is {high}°F with a low of {low}°F. "
             f"There's a {precipitation}% chance of precipitation."
         )
@@ -137,6 +148,16 @@ def ask_barlo():
         response = "I can only answer weather questions right now."
 
     response_label.config(text=response)
+
+
+listen_button = tk.Button(
+    root,
+    text="🎤 LISTEN",
+    font=("Arial", 12, "bold"),
+    command=listen_to_user
+)
+
+listen_button.pack(pady=5)
 
 
 ask_button = tk.Button(
