@@ -1,3 +1,4 @@
+import threading
 import tkinter as tk
 from PIL import Image, ImageTk
 
@@ -126,13 +127,37 @@ question_entry.pack(pady=10)
 
 
 def listen_to_user():
-    audio_file = record_audio()
-    transcription = transcribe_audio(audio_file)
+    listen_button.config(state="disabled", text="🎤 LISTENING...")
 
+    thread = threading.Thread(
+        target=process_voice_input,
+        daemon=True
+    )
+    thread.start()
+
+
+def process_voice_input():
+    try:
+        audio_file = record_audio()
+        transcription = transcribe_audio(audio_file)
+
+        root.after(0, lambda: finish_voice_input(transcription))
+
+    except Exception as error:
+        print(f"Voice error: {error}")
+        root.after(0, reset_listen_button)
+
+
+def finish_voice_input(transcription):
     question_entry.delete(0, tk.END)
     question_entry.insert(0, transcription)
 
+    reset_listen_button()
     ask_barlo()
+
+
+def reset_listen_button():
+    listen_button.config(state="normal", text="🎤 LISTEN")
 
 
 def ask_barlo():
