@@ -3,6 +3,7 @@ from PIL import Image, ImageTk
 
 from weather import get_weather, get_weather_description
 from voice import record_audio, transcribe_audio
+from speech import speak
 
 
 # -----------------------------
@@ -148,6 +149,7 @@ def ask_barlo():
         response = "I can only answer weather questions right now."
 
     response_label.config(text=response)
+    speak(response)
 
 
 listen_button = tk.Button(
